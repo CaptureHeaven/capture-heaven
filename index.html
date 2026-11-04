@@ -441,7 +441,7 @@ form label.lb{font-size:13px}
 </div><p class="copy"><a href="#top" class="totop" onclick="scrollTo({top:0,behavior:'smooth'});return false">Back to top &uarr;</a>&copy; <span id="yr"></span> Capture Heaven &middot; A helps ministry &middot; <a href="/privacy.html" class="pv">Privacy</a></p></footer>
 <script>
 // EDIT THESE with your real details
-var INFO={formUrl:'https://formspree.io/f/xvkkqnjy',email:"wkittle@captureheaven.com",phone:"618-320-1565",social:[["Instagram","https://www.instagram.com/capture_heaven_/"]]};
+var INFO={web3Key:'fc4c6860-d9cf-4b28-a706-7a6084a73fd6',formUrl:'https://formspree.io/f/xvkkqnjy',email:"wkittle@captureheaven.com",phone:"618-320-1565",social:[["Instagram","https://www.instagram.com/capture_heaven_/"]]};
 document.getElementById('yr').textContent=new Date().getFullYear();
 var ce=document.getElementById('ce');ce.href='mailto:'+INFO.email;ce.textContent=INFO.email;
 var cp=document.getElementById('cp');cp.href='tel:'+INFO.phone.replace(/[^+\d]/g,'');cp.textContent=INFO.phone;
@@ -454,9 +454,9 @@ var body='Name: '+v('name')+'\nEmail: '+v('email')+'\nPosition: '+v('position')+
 deliver(f,'Employment inquiry: '+v('emp')+' - '+v('org'),body)});
 function showSent(f,ok){var sn=f.querySelector('.sent');if(!sn)return;var ps=sn.querySelectorAll('p');if(ok){ps[0].textContent='Your request was sent. I read every request myself and will reply within 24 hours.';if(ps[1])ps[1].hidden=true}sn.hidden=false;f.classList.add('done');setTimeout(function(){f.scrollIntoView({block:'start'})},50)}
 function deliver(f,subj,body){var mail=function(){location.href='mailto:'+INFO.email+'?subject='+encodeURIComponent(subj)+'&body='+encodeURIComponent(body);showSent(f,false)};
-if(!INFO.formUrl){mail();return}
+var w3=!!INFO.web3Key;if(!INFO.formUrl&&!w3){mail();return}
 var b=f.querySelector('button[type=submit]'),t=b?b.textContent:'';if(b){b.disabled=true;b.textContent='Sending…'}
-fetch(INFO.formUrl,{method:'POST',headers:{'Accept':'application/json','Content-Type':'application/json'},body:JSON.stringify({_subject:subj,email:f.elements['email'].value,message:body})}).then(function(r){if(!r.ok)throw new Error('send failed');showSent(f,true)}).catch(function(){mail()}).then(function(){if(b){b.disabled=false;b.textContent=t}})}
+fetch(w3?'https://api.web3forms.com/submit':INFO.formUrl,{method:'POST',headers:{'Accept':'application/json','Content-Type':'application/json'},body:JSON.stringify(w3?{access_key:INFO.web3Key,subject:subj,from_name:'Capture Heaven website',email:f.elements['email'].value,message:body}:{_subject:subj,email:f.elements['email'].value,message:body})}).then(function(r){return r.json().catch(function(){return {}}).then(function(d){if(!r.ok||(w3&&d.success===false))throw new Error('send failed');showSent(f,true)})}).catch(function(){mail()}).then(function(){if(b){b.disabled=false;b.textContent=t}})}
 document.getElementById('hf').addEventListener('submit',function(e){e.preventDefault();var f=e.target,v=function(n){return f.elements[n].value},s=new FormData(f).getAll('svc');
 if(!s.length){f.querySelector('.err').hidden=false;return}f.querySelector('.err').hidden=true;
 var body='Name: '+v('name')+'\nEmail: '+v('email')+'\nPosition: '+v('position')+'\nMinistry/Church: '+v('org')+'\nWebsite: '+v('website')+'\nService needed: '+(s[0]==='Other'?'Other - '+v('svcother'):s[0])+'\nPreferred dates: '+v('dates')+'\nEvent location: '+v('location')+'\n\nWhat they need:\n'+v('msg');
